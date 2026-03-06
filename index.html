@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capstone Proposal — Kristina Hanxhara</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --accent: #8a6c2a;
+    --accent-light: #f5edd8;
+    --blue: #2563a8;
+    --blue-light: #dbeafe;
+    --purple: #6d3fa8;
+    --purple-light: #ede9fe;
+    --orange: #c05c1a;
+    --orange-light: #ffedd5;
+    --green: #1a7a50;
+    --green-light: #d1fae5;
+    --red: #b83232;
+    --red-light: #fdf0f0;
+    --text: #1a1814;
+    --muted: #7a7568;
+    --border: rgba(30,20,10,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--blue)); transition: width 0.4s ease; z-index: 200; }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5vh 8vw;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none; overflow: hidden;
+  }
+  .slide.active { opacity: 1; transform: translateY(0); pointer-events: all; }
+  .slide.exit { opacity: 0; transform: translateY(-24px); }
+  .slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(30,20,10,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(30,20,10,0.04) 1px, transparent 1px);
+    background-size: 70px 70px; pointer-events: none; z-index: 0;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  .slide-label {
+    font-family: 'DM Mono', monospace; font-size: clamp(0.58rem, 0.9vw, 0.7rem);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.8rem;
+  }
+  .slide-label::before { content: ''; display: inline-block; width: 18px; height: 1.5px; background: var(--accent); }
+  .slide-label .a { color: var(--accent); font-weight: 500; }
+
+  h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 2.8vw, 2.5rem); font-weight: 700; line-height: 1.15; margin-bottom: 0.4rem; color: var(--text); }
+  h2 em { color: var(--accent); font-style: normal; }
+
+  .lead { font-size: clamp(0.76rem, 1.05vw, 0.88rem); color: var(--muted); font-weight: 300; margin-bottom: 1.5rem; max-width: 720px; line-height: 1.65; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .card h3 { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .card p, .card li { font-size: 0.81rem; color: #4a4740; line-height: 1.65; font-weight: 300; }
+  .card ul { padding-left: 1.1rem; }
+  .card li { margin-bottom: 0.22rem; }
+
+  /* SLIDE 1 */
+  #s1 { justify-content: center; align-items: center; text-align: center; background: linear-gradient(160deg, #faf8f3 0%, #f0ebe0 100%); }
+  #s1::after { opacity: 0.5; }
+  #s1 .kicker { font-family: 'DM Mono', monospace; font-size: clamp(0.55rem, 0.85vw, 0.68rem); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); border: 1.5px solid rgba(138,108,42,0.3); padding: 0.45em 1.5em; display: inline-block; margin-bottom: 1.8rem; border-radius: 2px; }
+  #s1 h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4.2vw, 3.8rem); font-weight: 900; line-height: 1.1; max-width: 880px; color: var(--text); }
+  #s1 h1 em { color: var(--accent); font-style: normal; }
+  #s1 .sub { margin-top: 1.3rem; font-size: clamp(0.8rem, 1.15vw, 0.92rem); color: var(--muted); font-weight: 300; line-height: 1.7; }
+  #s1 .sub strong { color: var(--text); font-weight: 500; }
+  #s1 .meta { margin-top: 2rem; display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+  #s1 .meta span { font-family: 'DM Mono', monospace; font-size: 0.67rem; color: var(--muted); }
+  #s1 .meta span strong { color: var(--text); }
+  #s1 .divider { width: 50px; height: 1.5px; background: var(--accent); margin: 1.5rem auto 0; opacity: 0.4; }
+
+  /* SLIDE 2 */
+  #s2 .two-col { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1rem; max-width: 1040px; }
+  #s2 .two-col .card h3 { color: var(--accent); }
+  #s2 .chain-row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; max-width: 1040px; }
+  #s2 .cpill { font-family: 'DM Mono', monospace; font-size: 0.65rem; background: var(--surface); border: 1px solid var(--border); padding: 0.26em 0.72em; border-radius: 4px; color: var(--accent); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  #s2 .cpill.dim { color: var(--muted); font-weight: 400; }
+  #s2 .arr { color: var(--muted); font-size: 0.72rem; }
+  #s2 .chain-note { font-size: 0.75rem; color: var(--muted); font-weight: 300; margin-top: 0.45rem; max-width: 1040px; font-style: italic; }
+
+  /* SLIDE 3 */
+  #s3 .hist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 1040px; margin-bottom: 1rem; }
+  .hcard { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .hcard .era { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.32rem; }
+  .hcard h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.42rem; color: var(--text); }
+  .hcard p { font-size: 0.79rem; color: #5a5650; line-height: 1.6; font-weight: 300; }
+  .hcard ul { padding-left: 1rem; margin-top: 0.3rem; }
+  .hcard ul li { font-size: 0.78rem; color: #5a5650; line-height: 1.6; font-weight: 300; margin-bottom: 0.2rem; }
+  .hcard .htag { margin-top: 0.72rem; font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 0.2em 0.65em; border-radius: 3px; display: inline-block; }
+  .tag-bad { background: #fde8e8; color: #a02828; }
+  .tag-ok { background: var(--orange-light); color: var(--orange); }
+  #s3 .sic-box { max-width: 1040px; background: #fdf4f0; border: 1px solid rgba(184,80,50,0.18); border-radius: 8px; padding: 0.9rem 1.3rem; font-size: 0.81rem; color: #7a3820; line-height: 1.6; }
+  #s3 .sic-box strong { color: #b84030; font-weight: 600; }
+  #s3 .sic-box .code { font-family: 'DM Mono', monospace; background: rgba(184,80,50,0.1); padding: 0.1em 0.45em; border-radius: 3px; }
+  #s3 .sic-box .ai-note { margin-top: 0.5rem; font-weight: 500; color: #a83020; }
+
+  /* SLIDE 4 */
+  #s4 .rq-list { display: flex; flex-direction: column; gap: 0.9rem; max-width: 900px; }
+  .rq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.4rem; display: flex; gap: 1.3rem; align-items: flex-start; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .rq-n { font-family: 'Playfair Display', serif; font-size: 2.5rem; line-height: 1; font-weight: 900; color: var(--accent); opacity: 0.2; min-width: 2.2rem; }
+  .rq-b h3 { font-family: 'DM Mono', monospace; font-size: 0.64rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.32rem; }
+  .rq-b p { font-size: 0.84rem; color: #4a4740; line-height: 1.62; font-weight: 300; }
+
+  /* SLIDE 5 */
+  #s5 .hypo-main { max-width: 900px; background: var(--surface); border: 1px solid rgba(138,108,42,0.25); border-radius: 10px; padding: 1.8rem 2rem; margin-bottom: 1.2rem; position: relative; box-shadow: 0 2px 12px rgba(138,108,42,0.07); }
+  #s5 .hypo-main::before { content: '"'; font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--accent); opacity: 0.12; position: absolute; top: -0.6rem; left: 1.2rem; line-height: 1; }
+  #s5 .hypo-main p { font-family: 'Playfair Display', serif; font-size: clamp(0.95rem, 1.6vw, 1.2rem); line-height: 1.78; color: var(--text); font-style: italic; }
+  #s5 .hypo-main p em { color: var(--accent); font-style: normal; font-weight: 700; }
+
+  /* SLIDE 6 */
+  #s6 .pipeline { display: flex; align-items: stretch; max-width: 1040px; gap: 0; margin-bottom: 1.2rem; }
+  .ps { flex: 1; background: var(--surface); border: 1px solid var(--border); padding: 1.3rem 1.1rem; position: relative; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .ps:first-child { border-radius: 8px 0 0 8px; }
+  .ps:last-child { border-radius: 0 8px 8px 0; }
+  .ps::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .ps.p1::before { background: var(--blue); }
+  .ps.p2::before { background: var(--purple); }
+  .ps.p3::before { background: var(--orange); }
+  .ps .sn { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.38rem; }
+  .ps.p1 .sn { color: var(--blue); } .ps.p2 .sn { color: var(--purple); } .ps.p3 .sn { color: var(--orange); }
+  .ps h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; margin-bottom: 0.32rem; color: var(--text); }
+  .ps .tech { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); margin-bottom: 0.6rem; }
+  .ps p { font-size: 0.77rem; color: #5a5650; line-height: 1.6; font-weight: 300; }
+  .ps ul { padding-left: 0.9rem; margin-top: 0.3rem; }
+  .ps ul li { font-size: 0.75rem; color: #5a5650; line-height: 1.55; font-weight: 300; margin-bottom: 0.18rem; }
+  .pa { display: flex; align-items: center; padding: 0 0.35rem; color: var(--muted); font-size: 1rem; }
+  #s6 .insight { max-width: 1040px; border-left: 3px solid var(--accent); background: var(--accent-light); border-radius: 0 6px 6px 0; padding: 0.85rem 1.2rem; font-size: 0.83rem; color: #6a4e1a; line-height: 1.6; }
+  #s6 .insight strong { color: var(--text); }
+
+  /* SLIDE 7 */
+  #s7 .lit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; max-width: 1040px; }
+  .lcard { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.15rem; display: flex; gap: 0.85rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .lcard .bar { width: 3px; border-radius: 2px; flex-shrink: 0; }
+  .lcard .lbody { flex: 1; }
+  .lcard .topic { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; margin-bottom: 0.25rem; }
+  .lcard p { font-size: 0.77rem; color: #5a5650; line-height: 1.6; font-weight: 300; }
+
+  /* SLIDE 8 */
+  #s8 .ew { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.1rem; max-width: 1040px; }
+  .cc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.3rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .cc h3 { font-family: 'DM Mono', monospace; font-size: 0.63rem; letter-spacing: 0.17em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.85rem; }
+  .cr { display: flex; gap: 0.8rem; align-items: flex-start; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .cr:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .cl { font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 600; width: 24px; height: 24px; background: var(--accent-light); border: 1px solid rgba(138,108,42,0.25); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+  .cr h4 { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.1rem; color: var(--text); }
+  .cr p { font-size: 0.73rem; color: var(--muted); font-weight: 300; }
+  .ml { display: flex; flex-direction: column; gap: 0.6rem; }
+  .mr { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.62rem 0.9rem; display: flex; gap: 0.62rem; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+  .mr .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .mr p { font-size: 0.76rem; color: #4a4740; font-weight: 300; }
+  .mr strong { color: var(--text); font-weight: 600; }
+
+  /* SLIDE 9 */
+  #s9 { justify-content: center; align-items: center; text-align: center; background: linear-gradient(160deg, #faf8f3 0%, #f0ebe0 100%); }
+  #s9::after { opacity: 0.5; }
+  #s9 .tag { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; }
+  #s9 h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 2.8vw, 2.6rem); font-weight: 700; line-height: 1.5; max-width: 780px; color: var(--text); }
+  #s9 h2 em { color: var(--accent); font-style: normal; }
+  #s9 .div { width: 50px; height: 1.5px; background: var(--accent); margin: 1.6rem auto; opacity: 0.4; }
+  #s9 .mb p { font-size: 0.82rem; color: var(--muted); font-weight: 300; line-height: 2; }
+  #s9 .mb strong { color: var(--text); font-weight: 500; }
+
+  /* NAV */
+  .nav { position: fixed; bottom: 1.8rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 0.7rem; background: rgba(255,255,255,0.95); border: 1px solid var(--border); border-radius: 50px; padding: 0.5rem 1rem; backdrop-filter: blur(12px); z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .nav button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.88rem; padding: 0.22rem 0.62rem; font-family: 'DM Mono', monospace; border-radius: 4px; transition: color 0.2s, background 0.2s; }
+  .nav button:hover { color: var(--accent); background: var(--accent-light); }
+  .dots { display: flex; gap: 5px; align-items: center; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: #ccc8be; transition: all 0.3s; cursor: pointer; }
+  .dot.active { background: var(--accent); transform: scale(1.5); }
+  .counter { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted); min-width: 40px; text-align: center; }
+  .badge { position: fixed; top: 1.4rem; right: 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--muted); letter-spacing: 0.12em; z-index: 100; }
+  .hint { position: fixed; bottom: 1.4rem; right: 1.8rem; font-family: 'DM Mono', monospace; font-size: 0.57rem; color: var(--muted); opacity: 0.5; z-index: 100; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="deck">
+
+<!-- 1: TITLE -->
+<div class="slide active" id="s1">
+  <div class="kicker">MSc Data Science &amp; AI — Capstone Project Proposal</div>
+  <h1>Reliable <em>AI-Assisted</em><br>Trade Channel Classification</h1>
+  <p class="sub" style="margin-top:1.2rem;">A <strong>Three-Stage Hybrid Pipeline</strong> Designed Around the Known Limitations of Large Language Models</p>
+  <div class="meta">
+    <span><strong>Kristina Hanxhara</strong> · 200052562</span>
+    <span>CSCK700 — University of Liverpool</span>
+  </div>
+  <div class="divider"></div>
+</div>
+
+<!-- 2: WHERE THE IDEA CAME FROM -->
+<div class="slide" id="s2">
+  <div class="slide-label"><span class="a">Origin</span> — where the idea came from</div>
+  <h2>The idea stemmed from solving an <em>outdated approach</em> in a B2B organisation</h2>
+  <p class="lead">This idea stemmed from the need to solve an outdated solution in a B2B commercial organisation and proposed a better, more scalable alternative.</p>
+  <div class="two-col">
+    <div class="card">
+      <h3 style="color:var(--accent)">The Operational Context</h3>
+      <p>The organisation maintains a large database of UK customer and prospect companies that must be sorted into trade channel categories — mobile phone specialists, tyre specialists, computer hardware resellers, stationers — to support sales, marketing, and planning for universe studies to estimate the market for each channel.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent)">The Broken Status Quo</h3>
+      <ul>
+        <li>Buying classifications from <strong>Experian / LDC</strong> is expensive and contractually restricted</li>
+        <li>Their channel definitions are incompatible with the organisation's own channel definitions</li>
+        <li>Manual analyst research is accurate but causes workload and is time-consuming — results are needed faster and cheaper</li>
+      </ul>
+    </div>
+  </div>
+  <div class="chain-row">
+    <span class="cpill">Channel Classification</span><span class="arr">→</span>
+    <span class="cpill dim">Market Universe</span><span class="arr">→</span>
+    <span class="cpill dim">Market Share</span><span class="arr">→</span>
+    <span class="cpill dim">Territory Planning</span><span class="arr">→</span>
+    <span class="cpill dim">Marketing Strategy</span><span class="arr">→</span>
+    <span class="cpill dim">Board Decisions</span>
+  </div>
+  <p class="chain-note">A wrong classification at step one flows into every decision built on top of it, making this task far more important than it first appears.</p>
+</div>
+
+<!-- 3: HISTORICAL CONTEXT -->
+<div class="slide" id="s3">
+  <div class="slide-label"><span class="a">Historical Context</span> — how this problem has been approached</div>
+  <h2>Every approach so far is <em>too costly, too rigid, or not scalable</em></h2>
+  <div class="hist-grid">
+    <div class="hcard">
+      <div class="era">Current approach — commercial data</div>
+      <h3>Bought from Experian / LDC</h3>
+      <p>Data has been bought at around <strong>£3,000 per channel definition</strong> from commercial providers. The classifications are:</p>
+      <ul>
+        <li>Expensive and contractually locked</li>
+        <li>Based on SIC codes that do not align with the organisation's own channel definitions</li>
+        <li>Delivered as a static file with no flexibility to reclassify on demand</li>
+      </ul>
+      <div class="htag tag-bad">Expensive and misaligned</div>
+    </div>
+    <div class="hcard">
+      <div class="era">Current approach — manual research on top</div>
+      <h3>Bought Data + Manual Reclassification</h3>
+      <p>Because bought data does not match internal definitions, analysts manually research and reclassify companies on top of the purchased data. This means:</p>
+      <ul>
+        <li>Accurate results but only for companies that get reviewed</li>
+        <li>Not scalable across thousands of records</li>
+        <li>Slow, time-consuming, and creates workload pressure</li>
+      </ul>
+      <div class="htag tag-ok">Accurate but not scalable</div>
+    </div>
+  </div>
+  <div class="sic-box">
+    <strong>Why SIC codes fall short:</strong> SIC code <span class="code">47410</span> covers computer hardware specialists, software resellers, mobile phone retailers, and IT managed services providers. These are commercially critical distinctions that are completely invisible to SIC-based approaches.
+    <div class="ai-note">This is exactly why AI-assisted classification is needed.</div>
+  </div>
+</div>
+
+<!-- 4: RESEARCH QUESTIONS -->
+<div class="slide" id="s4">
+  <div class="slide-label"><span class="a">Research Questions</span></div>
+  <h2>Research Questions</h2>
+  <p class="lead">Three questions guide the design, evaluation, and findings of this project.</p>
+  <div class="rq-list">
+    <div class="rq-item">
+      <div class="rq-n">1</div>
+      <div class="rq-b">
+        <h3>Accuracy</h3>
+        <p>Can a three-stage pipeline combining web retrieval, rule-based logic, and LLM synthesis classify UK businesses into trade channels at accuracy levels comparable to Experian and LDC, at a fraction of the cost?</p>
+      </div>
+    </div>
+    <div class="rq-item">
+      <div class="rq-n">2</div>
+      <div class="rq-b">
+        <h3>Cost, Speed and Workload</h3>
+        <p>What is the per-record cost and processing time, and how many analyst hours are displaced per 1,000 records, compared to manual research and commercial subscriptions?</p>
+      </div>
+    </div>
+    <div class="rq-item">
+      <div class="rq-n">3</div>
+      <div class="rq-b">
+        <h3>LLM Contribution and Confidence</h3>
+        <p>Does the LLM add measurable value over rules alone? How well-calibrated are its confidence scores, and what are the failure conditions of each pipeline stage that should trigger a flag for human review?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5: HYPOTHESIS -->
+<div class="slide" id="s5">
+  <div class="slide-label"><span class="a">Research Hypothesis</span></div>
+  <h2>Research Hypothesis</h2>
+  <p class="lead" style="margin-bottom:1.3rem;">What this project expects to find.</p>
+  <div class="hypo-main">
+    <p>
+      An application that keeps retrieval, rule-based classification, and LLM reasoning as <em>three separate, focused stages</em> is expected to match the accuracy of commercial providers like Experian and LDC combined with human analyst review, at a <em>much lower cost per record</em>, while producing a <em>clear explanation</em> for every classification decision made.
+    </p>
+  </div>
+</div>
+
+<!-- 6: THE SOLUTION -->
+<div class="slide" id="s6">
+  <div class="slide-label"><span class="a">The Artefact</span> — the three-stage pipeline</div>
+  <h2><em>How can we use AI reliably</em> for trade channel classification?</h2>
+  <p class="lead">Each stage is constrained to the task it can perform dependably. The LLM is the reasoning layer.</p>
+  <div class="pipeline">
+    <div class="ps p1">
+      <div class="sn">Stage 1 — Retrieval</div>
+      <h3>Company Data</h3>
+      <div class="tech">Companies House API then Google Search API</div>
+      <ul>
+        <li>All <strong>desired</strong> UK-registered companies are pulled from <strong>Companies House</strong>, the official UK business registry, using SIC codes as filters</li>
+        <li>Using each company's name and SIC code as a starting point, the <strong>Google Search API</strong> retrieves live, current, public web information about what that company actually does</li>
+        <li>Every search call is logged with query, timestamp, and exact results returned</li>
+      </ul>
+    </div>
+    <div class="pa">→</div>
+    <div class="ps p2">
+      <div class="sn">Stage 2 — Rule Engine</div>
+      <h3>Structured Rules</h3>
+      <div class="tech">Python channel-specific logic</div>
+      <p>Applies a set of clear, channel-specific rules to the retrieved text. Produces a best-guess channel label and a confidence score. Organises the evidence into a clean, compact package so the LLM in Stage 3 receives focused, well-structured input rather than a large volume of raw text.</p>
+    </div>
+    <div class="pa">→</div>
+    <div class="ps p3">
+      <div class="sn">Stage 3 — LLM Synthesis</div>
+      <h3>Grounded Reasoning</h3>
+      <div class="tech">Claude API</div>
+      <p>Receives the full structured evidence package from Stages 1 and 2 combined. Reasons over all retrieved signals and the rule engine output together to confirm or adjust the final classification, producing a calibrated confidence score alongside the decision.</p>
+    </div>
+  </div>
+  <div class="insight">
+    Audit logs prove exactly what was checked, minimising the hallucinations that LLMs are known to produce when asked to retrieve and reason at the same time.
+  </div>
+</div>
+
+<!-- 7: LITERATURE REVIEW -->
+<div class="slide" id="s7">
+  <div class="slide-label"><span class="a">Literature Review</span> — key topics the design is grounded in</div>
+  <h2>Key areas of literature <em>this project draws from</em></h2>
+  <div class="lit-grid">
+    <div class="lcard">
+      <div class="bar" style="background:var(--red)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--red)">LLM Hallucination</div>
+        <p>How and why large language models generate confident but factually incorrect outputs, and the evidence that this is a structural property of how they work, not an occasional bug. This is the core reason retrieval and reasoning must be kept separate.</p>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="bar" style="background:var(--orange)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--orange)">Long-Context Degradation</div>
+        <p>Research showing that LLM performance drops when important information is buried in a long piece of text, even in models built for long inputs. This is why Stage 2 pre-curates a compact evidence package before passing anything to the LLM.</p>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="bar" style="background:var(--blue)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--blue)">Retrieval-Augmented Generation (RAG)</div>
+        <p>The principle that an AI system performs better when it is given retrieved facts to reason over, rather than being asked to retrieve and reason at the same time. This is the architectural foundation of the whole pipeline.</p>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="bar" style="background:var(--purple)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--purple)">Hybrid Rule and Neural Classification</div>
+        <p>Evidence that combining deterministic rules with neural models consistently outperforms either approach alone in domain-specific tasks. Rules handle the clear, well-defined cases and the LLM handles the ambiguous ones.</p>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="bar" style="background:var(--green)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--green)">Few-Shot In-Context Learning</div>
+        <p>How LLMs can apply a completely new classification scheme provided in the prompt without any retraining. This is what allows Stage 3 to use the organisation's proprietary channel definitions without needing labelled training data.</p>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="bar" style="background:var(--accent)"></div>
+      <div class="lbody">
+        <div class="topic" style="color:var(--accent)">AI, Work Design and Analyst Workload</div>
+        <p>Research on when automating tasks genuinely helps knowledge workers versus simply adding new pressures. Automating high-volume, repetitive lookup work frees analysts for higher-value tasks.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8: EVALUATION -->
+<div class="slide" id="s8">
+  <div class="slide-label"><span class="a">Evaluation</span> — how the artefact will be tested</div>
+  <h2>Testing the pipeline against <em>real-world conditions</em></h2>
+  <p class="lead">The pipeline is evaluated on 200 to 300 labelled UK companies, compared across three conditions and measured across seven dimensions.</p>
+  <div class="ew">
+    <div class="cc">
+      <h3>What we compare</h3>
+      <div class="cr"><div class="cl">A</div><div><h4>Full Three-Stage Pipeline</h4><p>The complete system being tested to see if it works overall</p></div></div>
+      <div class="cr"><div class="cl">B</div><div><h4>Rule Engine Only</h4><p>How accurate are the rules on their own, without the LLM?</p></div></div>
+      <div class="cr"><div class="cl">C</div><div><h4>Manual Classification</h4><p>How much does it cost in money and time for an analyst doing it manually?</p></div></div>
+    </div>
+    <div class="ml">
+      <div class="mr"><div class="dot" style="background:var(--blue)"></div><p><strong>Classification Accuracy</strong> — what percentage of labels are correct?</p></div>
+      <div class="mr"><div class="dot" style="background:var(--purple)"></div><p><strong>Accuracy Score</strong> — precision, recall, and F1 per channel</p></div>
+      <div class="mr"><div class="dot" style="background:var(--orange)"></div><p><strong>Cost Per Record</strong> — API costs plus analyst time vs. Experian and LDC</p></div>
+      <div class="mr"><div class="dot" style="background:var(--green)"></div><p><strong>Processing Speed</strong> — time to classify one record end-to-end</p></div>
+      <div class="mr"><div class="dot" style="background:var(--accent)"></div><p><strong>Analyst Hours Freed</strong> — per 1,000 records classified</p></div>
+      <div class="mr"><div class="dot" style="background:var(--red)"></div><p><strong>Statistical Significance</strong> — is the accuracy gain real?</p></div>
+      <div class="mr"><div class="dot" style="background:#999"></div><p><strong>Failure Analysis</strong> — where and why did each stage go wrong?</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- 9: CLOSING -->
+<div class="slide" id="s9">
+  <div class="tag">In summary</div>
+  <h2>Focusing on <em>how to design a system</em> that uses AI reliably by being grounded in <em>accurate, specific data</em>, not a general all-achieving system we are used to seeing.</h2>
+  <div class="div"></div>
+  <div class="mb">
+    <p><strong>Kristina Hanxhara</strong> · 200052562</p>
+    <p>MSc Data Science and Artificial Intelligence · University of Liverpool</p>
+    <p>CSCK700 — Computer Science Capstone Project</p>
+  </div>
+</div>
+
+</div>
+
+<div class="nav">
+  <button onclick="navigate(-1)">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 9</span>
+  <button onclick="navigate(1)">→</button>
+</div>
+<div class="badge" id="badge">01 / 9</div>
+<div class="hint">← → keys or click dots</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0, busy = false;
+  const dotsEl = document.getElementById('dots');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+  function ui() {
+    document.getElementById('counter').textContent = `${cur+1} / ${total}`;
+    document.getElementById('badge').textContent = `${String(cur+1).padStart(2,'0')} / ${total}`;
+    document.getElementById('progress').style.width = `${((cur+1)/total)*100}%`;
+    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===cur));
+  }
+  function goTo(idx) {
+    if (busy || idx===cur || idx<0 || idx>=total) return;
+    busy = true;
+    const prev = cur; cur = idx;
+    slides[prev].classList.add('exit'); slides[prev].classList.remove('active');
+    slides[cur].classList.add('active');
+    setTimeout(() => { slides[prev].classList.remove('exit'); busy = false; }, 520);
+    ui();
+  }
+  function navigate(d) { goTo(cur+d); }
+  document.addEventListener('keydown', e => {
+    if (e.key==='ArrowRight'||e.key==='ArrowDown') navigate(1);
+    if (e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
+  });
+  ui();
+</script>
+</body>
+</html>
