@@ -201,6 +201,7 @@
     <span>CSCK700 — University of Liverpool</span>
   </div>
   <div class="divider"></div>
+  <a href="https://web-production-6c99.up.railway.app/" target="_blank" style="margin-top:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--accent);letter-spacing:0.12em;text-decoration:none;border-bottom:1px solid rgba(138,108,42,0.35);padding-bottom:1px;opacity:0.8;">demo</a>
 </div>
 
 <!-- 2: WHERE THE IDEA CAME FROM -->
@@ -354,14 +355,14 @@
       <div class="bar" style="background:var(--red)"></div>
       <div class="lbody">
         <div class="topic" style="color:var(--red)">LLM Hallucination</div>
-        <p>How and why large language models generate confident but factually incorrect outputs, and the evidence that this is a structural property of how they work, not an occasional bug. This is the core reason retrieval and reasoning must be kept separate.</p>
+        <p>How and why large language models generate confident but factually incorrect outputs, and the evidence that this is a structural property of how they work, not an occasional occurrence. This is the core reason retrieval and reasoning must be kept separate.</p>
       </div>
     </div>
     <div class="lcard">
       <div class="bar" style="background:var(--orange)"></div>
       <div class="lbody">
         <div class="topic" style="color:var(--orange)">Long-Context Degradation</div>
-        <p>Research showing that LLM performance drops when important information is buried in a long piece of text, even in models built for long inputs. This is why Stage 2 pre-curates a compact evidence package before passing anything to the LLM.</p>
+        <p>Research showing that LLM performance drops when important information is inside a long text, even in models built for long inputs. This is why Stage 2 combines the evidence before passing it to the LLM.</p>
       </div>
     </div>
     <div class="lcard">
@@ -374,15 +375,15 @@
     <div class="lcard">
       <div class="bar" style="background:var(--purple)"></div>
       <div class="lbody">
-        <div class="topic" style="color:var(--purple)">Hybrid Rule and Neural Classification</div>
-        <p>Evidence that combining deterministic rules with neural models consistently outperforms either approach alone in domain-specific tasks. Rules handle the clear, well-defined cases and the LLM handles the ambiguous ones.</p>
+        <div class="topic" style="color:var(--purple)">Combining Rules with AI Models</div>
+        <p>Evidence that using a set of fixed rules alongside an AI model works better than either on its own, especially for specific domains. Clear-cut cases are handled by the rules, and the LLM steps in for the ones that are harder to categorise.</p>
       </div>
     </div>
     <div class="lcard">
       <div class="bar" style="background:var(--green)"></div>
       <div class="lbody">
-        <div class="topic" style="color:var(--green)">Few-Shot In-Context Learning</div>
-        <p>How LLMs can apply a completely new classification scheme provided in the prompt without any retraining. This is what allows Stage 3 to use the organisation's proprietary channel definitions without needing labelled training data.</p>
+        <div class="topic" style="color:var(--green)">Teaching the AI Without Retraining It</div>
+        <p>LLMs can follow a completely new set of classification rules if you simply write them into the prompt, no retraining or extra data needed. This is how Stage 3 learns the organisation's specific channel definitions on the spot, without any prior preparation.</p>
       </div>
     </div>
     <div class="lcard">
